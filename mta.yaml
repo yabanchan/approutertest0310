@@ -1,0 +1,110 @@
+_schema-version: "3.1"
+ID: testApprouterPJ20230310
+description: testApprouterPJ20230310 application
+version: 1.0.0-SNAPSHOT
+modules:
+- name: testApprouterPJ20230310-srv
+  type: java
+  path: srv
+  properties:
+    SPRING_PROFILES_ACTIVE: cloud
+  provides:
+  - name: srv-api
+    properties:
+      srv-url: ${default-url}
+  parameters:
+    buildpack: java_buildpack
+  build-parameters:
+    build-result: target/*-exec.jar
+    builder: custom
+    commands:
+    - mvn clean package -DskipTests=true
+- name: testApprouterPJ20230310-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: testApprouterPJ20230310-destination-service
+    parameters:
+      content-target: true
+  - name: testApprouterPJ20230310_html_repo_host
+    parameters:
+      service-key:
+        name: testApprouterPJ20230310_html_repo_host-key
+  - name: uaa_testApprouterPJ20230310
+    parameters:
+      service-key:
+        name: uaa_testApprouterPJ20230310-key
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: testmanageapprouter20230310_testApprouterPJ20230310_html_repo_host
+          ServiceInstanceName: testApprouterPJ20230310-html5-app-host-service
+          ServiceKeyName: testApprouterPJ20230310_html_repo_host-key
+          sap.cloud.service: testmanageapprouter20230310
+        - Authentication: OAuth2UserTokenExchange
+          Name: testmanageapprouter20230310_uaa_testApprouterPJ20230310
+          ServiceInstanceName: testApprouterPJ20230310-xsuaa-service
+          ServiceKeyName: uaa_testApprouterPJ20230310-key
+          sap.cloud.service: testmanageapprouter20230310
+        existing_destinations_policy: ignore
+  build-parameters:
+    no-source: true
+- name: testApprouterPJ20230310-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: testApprouterPJ20230310_html_repo_host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - testapprouter20230310.zip
+      name: testapprouter20230310
+      target-path: resources/
+- name: testapprouter20230310
+  type: html5
+  path: app/testapprouter20230310
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: testApprouterPJ20230310-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: testApprouterPJ20230310-destination-service
+    service-plan: lite
+- name: testApprouterPJ20230310_html_repo_host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: testApprouterPJ20230310-html5-app-host-service
+    service-plan: app-host
+- name: uaa_testApprouterPJ20230310
+  type: org.cloudfoundry.managed-service
+  parameters:
+    path: ./xs-security.json
+    service: xsuaa
+    service-name: testApprouterPJ20230310-xsuaa-service
+    service-plan: application
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true

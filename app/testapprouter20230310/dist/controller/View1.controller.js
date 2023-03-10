@@ -1,0 +1,1 @@
+sap.ui.define(["sap/ui/core/mvc/Controller"],function(o){"use strict";return o.extend("testapprouter20230310.controller.View1",{onInit:function(){},RestControllerTest:function(){$.ajax({url:"/api/hello",type:"GET"}).done(function(o){console.log(o)}).fail(function(){console.log("error")})}})});
