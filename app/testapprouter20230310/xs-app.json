@@ -15,6 +15,13 @@
       "destination": "ui5"
     },
     {
+      "source": "^/api/(.*)$",
+      "target": "/api/$1",
+      "destination": "test0313",
+      "authenticationType": "none",
+      "csrfProtection": false
+    },
+    {
       "source": "^(.*)$",
       "target": "$1",
       "service": "html5-apps-repo-rt",

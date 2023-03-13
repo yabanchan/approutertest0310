@@ -15,8 +15,8 @@ sap.ui.define([
                 $.ajax({
                     url:  '/api/hello',
                     type: 'GET'
-                }).done(function(date){
-                    console.log(date);
+                }).done(function(data){
+                    console.log(data);
                 }).fail(function(){
                     console.log("error");
                 })

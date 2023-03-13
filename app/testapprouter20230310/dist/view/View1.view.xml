@@ -2,7 +2,7 @@
     <Page id="page" title="{i18n>title}">
         <content>
             <Label text="Label" width="100%" id="label0"/>
-            <Button xmlns="sap.m" text="Button" id="button0"  press="RestControllerTest" type="Attention" />
+            <Button xmlns="sap.m" text="RestCheck" id="button0"  press="RestControllerTest" type="Attention" />
         </content>
     </Page>
 </mvc:View>
