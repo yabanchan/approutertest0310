@@ -12,13 +12,16 @@ sap.ui.define([
 
             },
             RestControllerTest: function(){
+                var url=this.getOwnerComponent().getManifestObject().resolveUri("/api/hello");
                 $.ajax({
-                    url:  '/api/hello',
+                    url:  url,
                     type: 'GET'
                 }).done(function(data){
                     console.log(data);
+                    console.log(url);
                 }).fail(function(){
                     console.log("error");
+                    console.log(url);
                 })
             },
         });
