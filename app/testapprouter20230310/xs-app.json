@@ -17,7 +17,7 @@
     {
       "source": "^/api/(.*)$",
       "target": "/api/$1",
-      "destination": "test0313",
+      "destination": "testApprouterPJ20230310-srv",
       "authenticationType": "xsuaa",
       "csrfProtection": false
     },

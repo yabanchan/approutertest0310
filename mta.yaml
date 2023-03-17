@@ -3,7 +3,9 @@ ID: testApprouterPJ20230310
 description: testApprouterPJ20230310 application
 version: 1.0.0-SNAPSHOT
 modules:
+# --------------------- SERVER MODULE ------------------------
 - name: testApprouterPJ20230310-srv
+# ------------------------------------------------------------
   type: java
   path: srv
   properties:
@@ -49,10 +51,13 @@ modules:
         existing_destinations_policy: ignore
   build-parameters:
     no-source: true
+# ------------------ APPLICATION CONTENT ---------------------
 - name: testApprouterPJ20230310-app-content
+# ------------------------------------------------------------
   type: com.sap.application.content
   path: .
   requires:
+  - name: testApprouterPJ20230310-destination-service
   - name: testApprouterPJ20230310_html_repo_host
     parameters:
       content-target: true
@@ -74,25 +79,32 @@ modules:
     - npm run build:cf
     supported-platforms: []
 resources:
+# ------------------------------------------------------------
 - name: testApprouterPJ20230310-destination-service
+# ------------------------------------------------------------
   type: org.cloudfoundry.managed-service
+  requires:
+      - name: srv-api
   parameters:
-    config:
-      HTML5Runtime_enabled: true
-      init_data:
-        instance:
-          destinations:
-          - Authentication: NoAuthentication
-            Name: ui5
-            ProxyType: Internet
-            Type: HTTP
-            URL: https://ui5.sap.com
-          existing_destinations_policy: update
-      version: 1.0.0
-    service: destination
-    service-name: testApprouterPJ20230310-destination-service
-    service-plan: lite
+      service: destination
+      service-plan: lite
+      config:
+        version: 1.0.0
+        HTML5Runtime_enabled: true
+        init_data:
+          instance:
+            existing_destinations_policy: update        
+            destinations:
+                - Name: testApprouterPJ20230310-srv
+                  URL: ~{srv-api/srv-url}
+                  Authentication: NoAuthentication
+                  Type: HTTP
+                  ProxyType: Internet
+                  HTML5.ForwardAuthToken: true
+                  HTML5.DynamicDestination: true
+# ------------------------------------------------------------
 - name: testApprouterPJ20230310_html_repo_host
+# ------------------------------------------------------------
   type: org.cloudfoundry.managed-service
   parameters:
     service: html5-apps-repo
